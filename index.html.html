@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="supportfiles/html/style.css">
+</head>
+<body>
+	
+	<div id="header">
+	  <img src="supportfiles/images/banner.gif" width="507" height="76" alt="logo">
+	  <h2 align="left">
+	  <input type="search" results="5" id="search-box" placeholder="Search">
+	</div>
+	<div id="left-nav">
+		<a href="supportfiles/html/contenthome.html" target="content">Home</a>
+		<a href="supportfiles/html/welcome.html" target="content">General Chair's Welcome</a>
+		<a href="supportfiles/html/TOC.htm" target="content">Technical Papers</a>
+        <a href="supportfiles/pages/TPC.pdf#page1" target="content">Technical Program Committee</a>
+		<a href="supportfiles/html/Workshops.htm" target="content">Workshops</a>
+        <a href="supportfiles/pages/Bios.pdf#page1" target="content">Biographies</a>
+		<a href="supportfiles/pages/awards.pdf" target="content">Past Awards and Presentations</a>
+		<a href="supportfiles/pages/exhibitors.pdf" target="content">2017 Exhibitors List</a>
+		<a href="supportfiles/html/history.html" target="content">History of EOS/ESD Symposium</a>
+		<a href="supportfiles/pages/VolunteerRecognition.pdf" target="content">2016 Volunteer Recognition</a>
+        <a href="supportfiles/html/future symposiums.html" target="content">Future EOS/ESD Association Events</a>
+		<a href="http://www.esda.org" target="new">www.esda.org</a>
+	</div>
+	<div id="content">
+	<iframe id="content-frame" name="content" src="supportfiles/html/contenthome.html">
+		
+	</iframe>
+	</div>
+	<div id="search-results">
+	</div>
+	
+	<div id="footer">
+		<p align="center">Setting the Global Standards for Static Control! <br />
+		  &copy; 2017 EOS/ESD Association, Inc.  7900 Turin Rd., Bldg. 3  Rome, NY  13440-2069, USA<br />
+		  Phone: +1-315-339-6937 Email: info@esda.org    www.esda.org</p>
+	</div>
+	<script src="supportfiles/html/lunr.min.js"></script>
+	<script src="supportfiles/html/pdf-index.js"></script>
+	
+	<script>
+		var docrefs={};
+		var idx = lunr(function () {
+		    this.field('title', { boost: 10 })
+		    this.field('body')
+		})
+
+		for(var i=0;i<docs.length;i++) {
+			var doc=docs[i];
+			idx.add(doc);
+			docrefs[doc.id]=i;
+		}
+
+	</script>
+	<script>
+		var searchBox=document.getElementById('search-box');
+		var searchResults=document.getElementById('search-results');
+		
+		function dismissSearch() {
+			searchResults.style.display='none';
+			return true;
+		}
+		
+		function updateSearch() {
+			if(searchBox.value.length>0) {
+				var link;
+				for(var i=searchResults.childNodes.length-1;i>=0;i--) {
+					searchResults.removeChild(searchResults.childNodes[i]);
+				}
+				var results=idx.search(searchBox.value);
+				for(var i=0;i<results.length;i++) {
+					doc=docs[docrefs[results[i].ref]];
+					link=document.createElement('a');
+					link.innerText=doc.title;
+					link.href=doc.url;
+					link.target='content';
+					link.addEventListener("click", dismissSearch);
+					searchResults.appendChild(link);
+				}
+				searchResults.style.display='block';
+//				console.log(results);
+			} else {
+				searchResults.style.display='none';
+			}
+		}
+
+		searchBox.addEventListener("input", function() {
+			if(window.searchTimer != undefined) {
+				window.clearTimeout(window.searchTimer);
+			}
+			window.searchTimer=window.setTimeout(function() {
+				delete window.searchTimer;
+				updateSearch();
+			}, 200);
+		});
+	</script>
+</body>
+</html>
